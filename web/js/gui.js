@@ -45,9 +45,25 @@ function showalbum(uri) {
 }
 
 function showartist(uri) {
+	if (artistviewuri != uri) {
+	    $(ARTIST_TABLE).empty();		
+		//fill from cache
+	    if (playlists[uri]) {
+	    	playlisttotable(playlists[uri], ARTIST_TABLE)
+	    }
+	}
+	
+	//set globals
+	artistviewuri = uri;
+    currentviewuri = uri;
+	
+	//show
+	switchContent('artistspane');
+
+	//send event if the list is updated in between (sporadic of course)
     socket.emit('getartist', uri);
-	switchContent('artistspane')
-	currentviewuri = uri;
+
+	
 }
 
 //play uri, update playlist to player if needed
@@ -63,15 +79,19 @@ function playtrack (uri) {
 			socket.emit('playalbum', currentviewuri);
 		} else if (currentviewuri.indexOf(":artist:") != -1 ) {
 			socket.emit('playartist', currentviewuri);
+
 		} else {
-	*/		
-			//custom (search) playlist
+*/
+
+//TODO not copy whole list each time
+			//custom, not stored playlist
 			with(playlists[currentviewuri]) {
 				for(var i=0; i < tracks.length; i++) {
 					trackslist.push(tracks[i].uri)
 				}
 			}
-		    socket.emit('newtracklist', trackslist);
+		    socket.emit('loadtracklist', trackslist);
+
 //		}	
 //	}
     socket.emit('playtrack', uri);
@@ -102,7 +122,7 @@ function setPlaylist (uri) {
 	$('#currentplaylisttable').empty();
 	//get if pl not in cache	
 	if(playlists[ uri ]) {
-		playlisttotable(playlists[uri], '#currentplaylisttable');
+		playlisttotable(playlists[uri], CURRENT_PLAYLIST_TABLE);
 		currentviewuri = uri;
 	} else {
 		socket.emit('getplaylisttracks', uri);
@@ -270,7 +290,6 @@ function updateTime() {
 function switchContent (divid) {
 	$('.content').hide();
 	$('#' + divid).show();
-	//$('#' + divid).load(divid + '.html');
 	$('.nav li').removeClass('active');
 	$('#li' + divid).addClass('active');
 	switch(divid) {
@@ -280,7 +299,9 @@ function switchContent (divid) {
 		case 'mymusic':
 			getPlaylists();
 			break;	
-		case 'search':
+		case 'search':	
+			break;	
+		case 'artist':
 			break;	
 	}
 }

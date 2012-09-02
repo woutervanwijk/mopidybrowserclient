@@ -14,19 +14,24 @@ var socket;
 //uri of current playlist/album/artist 
 var currentviewuri = '';
 var nowplayinguri = '';
+var searchviewuri = '';
+var albumviewuri = '';
+var artistviewuri = '';
 
 //values for controls
-var play 
+var play;
 var shuffle; 
 var repeat; 
 var currentVolume = -1;
 var muteVol = -1;
 
-//array of used playlists
+//array of cached playlists (not only user-playlists, also search, artist, album-playlists)
 var playlists = new Array();
-var searchartists = new Array();
-var searchalbums = new Array();
-var searchtracks = new Array();
+
+//constants
+ARTIST_TABLE = '#artisttable';
+ALBUM_TABLE = '#albumtable';
+CURRENT_PLAYLIST_TABLE = '#currentplaylisttable';
 
 WEB_SOCKET_SWF_LOCATION = "/static/WebSocketMain.swf";
 WEB_SOCKET_DEBUG = true;

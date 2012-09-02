@@ -29,7 +29,7 @@ function handlePlaylist (resultArr) {
 	//cache
 	newplaylisturi = resultArr["uri"];
 	playlists[ newplaylisturi ] = resultArr;
-	playlisttotable(playlists[newplaylisturi], '#currentplaylisttable');
+	playlisttotable(playlists[newplaylisturi], CURRENT_PLAYLIST_TABLE);
 	currentviewuri = newplaylisturi;
 }
 
@@ -52,11 +52,11 @@ function handleAlbumResults (resultArr) {
 	console.log(resultArr["uri"]);
 	console.log(resultArr);
 	playlists[resultArr["uri"]] = resultArr;
-	playlisttotable(resultArr, '#albumtable');
+	playlisttotable(resultArr, ALBUM_TABLE);
 }
 
 function handleArtistResults (resultArr) {
 	console.log(resultArr);
 	playlists[resultArr["uri"]] = resultArr;
-	playlisttotable(resultArr, '#artisttable');
+	playlisttotable(resultArr, ARTIST_TABLE);
 }
