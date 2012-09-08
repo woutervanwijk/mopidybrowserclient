@@ -30,7 +30,6 @@ function handlePlaylist (resultArr) {
 	newplaylisturi = resultArr["uri"];
 	playlists[ newplaylisturi ] = resultArr;
 	playlisttotable(playlists[newplaylisturi], CURRENT_PLAYLIST_TABLE);
-	currentviewuri = newplaylisturi;
 }
 
 //process results of a returned playlist
@@ -50,13 +49,13 @@ function handleSearchResults (searchtype, resultArr) {
 
 function handleAlbumResults (resultArr) {
 	console.log(resultArr["uri"]);
-	console.log(resultArr);
+//	console.log(resultArr);
 	playlists[resultArr["uri"]] = resultArr;
 	playlisttotable(resultArr, ALBUM_TABLE);
 }
 
 function handleArtistResults (resultArr) {
-	console.log(resultArr);
+//	console.log(resultArr);
 	playlists[resultArr["uri"]] = resultArr;
 	playlisttotable(resultArr, ARTIST_TABLE);
 }

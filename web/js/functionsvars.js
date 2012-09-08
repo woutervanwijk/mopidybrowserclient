@@ -11,13 +11,6 @@ var wsurl = host + ':' + port + baseurl
 var intv;
 var socket;
 
-//uri of current playlist/album/artist 
-var currentviewuri = '';
-var nowplayinguri = '';
-var searchviewuri = '';
-var albumviewuri = '';
-var artistviewuri = '';
-
 //values for controls
 var play;
 var shuffle; 
@@ -36,6 +29,39 @@ CURRENT_PLAYLIST_TABLE = '#currentplaylisttable';
 WEB_SOCKET_SWF_LOCATION = "/static/WebSocketMain.swf";
 WEB_SOCKET_DEBUG = true;
 
+	
+//process updated playlist to gui
+function playlisttotable(playlist, table) {
+	/*  <tr>
+			<td>Title</td>
+			<td>Artist</td>
+			<td>Album</td>
+			<td>Length</td>
+		</tr>
+	*/
+	tmp = '';
+	$(table).empty();
+
+	with(playlist) {
+		for(var i=0; i < tracks.length; i++) {
+			var child = '<tr><td><a href="#" class="name" id="' + tracks[i].uri + '">' + tracks[i].name + "</a></td><td>";
+				for(var j=0; j < tracks[i].artists.length; j++) {
+					//console.log(j);
+					child += '<a href="#" class="artist" id="' + tracks[i].artists[j].uri + '">' + tracks[i].artists[j].name + "</a>";
+				}
+				 child += '</td><td><a href="#" class="album" id="' + tracks[i].albumuri + '">' + tracks[i].albumname + 
+				 '</a></td><td><a href="#" class="time" id="' + tracks[i].uri + '">' + timeFromSeconds (tracks[i].length) + '</a></td></tr>';
+			tmp += child;
+		};
+	}
+		
+	$(table).html( tmp );
+	
+	//set click handlers
+	$(table + ' .name').click( function() { return playtrack(this.id, playlist.uri) } );
+	$(table + ' .album').click( function() { return showalbum(this.id, playlist.uri) } );
+	$(table + ' .artist').click( function() { return showartist(this.id, playlist.uri) } );
+}
 
 //convert time to human readable format  
 function timeFromSeconds (length) {

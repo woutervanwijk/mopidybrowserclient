@@ -1,62 +1,19 @@
 /* all  gui interactions here 
  * 
  */
-	
-//process updated playlist to gui
-function playlisttotable(playlist, table) {
-	/*  <tr>
-			<td>Title</td>
-			<td>Artist</td>
-			<td>Album</td>
-			<td>Length</td>
-		</tr>
-	*/
-	tmp = '';
-	with(playlist) {
-		for(var i=0; i < tracks.length; i++) {
-			var child = '<tr><td><a href="#" class="name" id="' + tracks[i].uri + '">' + tracks[i].name + "</a></td><td>";
-				for(var j=0; j < tracks[i].artists.length; j++) {
-					//console.log(j);
-					child += '<a href="#" class="artist" id="' + tracks[i].artists[j].uri + '">' + tracks[i].artists[j].name + "</a>";
-				}
-				 child += '</td><td><a href="#" class="album" id="' + tracks[i].albumuri + '">' + tracks[i].albumname + 
-				 '</a></td><td><a href="#" class="time" id="' + tracks[i].uri + '">' + timeFromSeconds (tracks[i].length) + '</a></td></tr>';
-			tmp += child;
-		};
-	}
-	//if (currentviewuri != pluri) {return}
-	
-	$(table).empty();
-	
-	//console.log(playlists[pluri]);
-	
-	$(table).html( tmp );
-	
-	//set click handlers
-	$(table + ' .name').click( function() { return playtrack(this.id) } );
-	$(table + ' .album').click( function() { return showalbum(this.id) } );
-	$(table + ' .artist').click( function() { return showartist(this.id) } );
-}
 
 function showalbum(uri) {
     socket.emit('getalbum', uri);
 	switchContent('albumspane');
-	currentviewuri = uri;
 }
 
 function showartist(uri) {
-	if (artistviewuri != uri) {
-	    $(ARTIST_TABLE).empty();		
-		//fill from cache
-	    if (playlists[uri]) {
-	    	playlisttotable(playlists[uri], ARTIST_TABLE)
-	    }
-	}
-	
-	//set globals
-	artistviewuri = uri;
-    currentviewuri = uri;
-	
+    $(ARTIST_TABLE).empty();		
+	//fill from cache
+    if (playlists[uri]) {
+    	playlisttotable(playlists[uri], ARTIST_TABLE)
+    }
+
 	//show
 	switchContent('artistspane');
 
@@ -67,25 +24,16 @@ function showartist(uri) {
 }
 
 //play uri, update playlist to player if needed
-function playtrack (uri) {
+function playtrack (uri, playlisturi) {
 	trackslist = new Array();
 	console.log('uri:'  + uri);
-	console.log('cv:' + currentviewuri)
-/*	if (currentviewuri != nowplayinguri) { 
-		if (currentviewuri.indexOf(":playlist:") != -1 ) {
-			console.log('cv' + currentviewuri)
-			socket.emit('playplaylist', currentviewuri);
-		} else if (currentviewuri.indexOf(":album:") != -1 ) {
-			socket.emit('playalbum', currentviewuri);
-		} else if (currentviewuri.indexOf(":artist:") != -1 ) {
-			socket.emit('playartist', currentviewuri);
-
-		} else {
-*/
-
+	$('#currentplaylisttable').empty();
+	playlisttotable(playlists[playlisturi], CURRENT_PLAYLIST_TABLE);
+	switchContent('currentpane');
+	
 //TODO not copy whole list each time
 			//custom, not stored playlist
-			with(playlists[currentviewuri]) {
+			with(playlists[playlisturi]) {
 				for(var i=0; i < tracks.length; i++) {
 					trackslist.push(tracks[i].uri)
 				}
@@ -123,12 +71,10 @@ function setPlaylist (uri) {
 	//get if pl not in cache	
 	if(playlists[ uri ]) {
 		playlisttotable(playlists[uri], CURRENT_PLAYLIST_TABLE);
-		currentviewuri = uri;
 	} else {
 		socket.emit('getplaylisttracks', uri);
 	}
 	switchContent('currentpane');
-	currentviewuri = uri;
 }
 
 function newPlaylist(pl, name, plid) {
@@ -176,7 +122,6 @@ function searchPressed(key) {
 		$('#albumresulttable').empty();
 		$('#trackresulttable').empty();
 		switchContent('searchpane');
-		currentviewuri = 'search';
 	}
 	return true;
 }
