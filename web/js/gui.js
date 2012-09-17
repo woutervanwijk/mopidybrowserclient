@@ -40,14 +40,14 @@ function showalbum(uri) {
 function playtrack(uri, playlisturi) {
     trackslist = new Array();
     console.log('uri:' + uri);
-    $('#currentplaylisttable').empty();
-    playlist = playlists[playlisturi];
-    playlisttotable(playlist, CURRENT_PLAYLIST_TABLE);
+    $(CURRENT_PLAYLIST_TABLE).empty();
+    pl = playlists[playlisturi];
+    playlisttotable(pl, CURRENT_PLAYLIST_TABLE);
     switchContent('current', uri);
 
     //TODO not copy whole list each time
     //custom, not stored playlist
-    with (playlist) {
+    with (pl) {
         for (var i = 0; i < tracks.length; i++) {
             trackslist.push(tracks[i].uri)
         }
@@ -55,9 +55,9 @@ function playtrack(uri, playlisturi) {
     socket.emit('loadtracklist', trackslist);
     var track;
     //find track
-    for (var i = 0; i < playlist.tracks.length; i++) {
-        if (playlist.tracks[i].uri == uri) {
-            track = playlist.tracks[i];
+    for (var i = 0; i < pl.tracks.length; i++) {
+        if (pl.tracks[i].uri == uri) {
+            track = pl.tracks[i];
             break;
         }
     }
@@ -121,25 +121,6 @@ function setPlaylist(uri) {
     switchContent('current', uri);
     return false;
 }
-/*
-function newPlaylist(pl, name, plid) {
-    socket.emit('clear');
-    currentplaylist.length = 0;
-    currentplaylist = pl;
-    currentplaylistid = -1;
-    if (name) {
-        currentplaylistname = name;
-    } else {
-        currentplaylistname = '';
-    }
-    currentSongId = -1;
-    socket.emit('clear');
-    for (var i = 0; i < pl.length; i++) {
-        socket.emit('add', pl[i].file);
-    }
-    playid(plid);
-    switchContent('current', uri);
-} */
 
 function setVolume(value) {
 console.log(value);
