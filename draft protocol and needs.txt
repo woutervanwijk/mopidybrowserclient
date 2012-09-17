@@ -1,0 +1,183 @@
+Mopidiy Webservices Protocol
+
+- events
+- nested playlists
+- coverart
+- playlist edit
+
+Optional
+- people
+- 'artistpedia'
+- toplists artist
+
+----
+
+Protocol
+Base: socketio
+
+Events to mopidy (client generated):
+------------------------------------
+
+SetPlay
+Toggles play status. Arguments: none, true or false (true=play, none toggles)
+
+Previoustrack/nexttreck
+Argument: none
+
+Loadtracks:
+Loads tracks into the current playlist. Arguments: an uri of a playlist, album, search, artist. Or a custom list of track-uris
+
+Playuri
+Plays track in playlist, continues to next track if there is one. Argument: track-uri
+
+Seek 
+Goto a position in the current track. Argument: time (in seconds)
+
+SetVolume
+Argument: 0-100
+
+SetMute
+Toggles mute status. Arguments: none, true or false (true=mute, none toggles)
+
+Getartist/getplaylist/getalbum
+Returns a list of tracks, including names, etc. Argument: uri
+
+Getplaylists
+Returns a nested list of playlists of the user, with names and uris, playlist-folders
+
+Getservicedata
+Returns data of the current service (spotify, rdio, whatever). Returns: serviceid, service name, logo, username
+
+Getcurrentplaylist
+Returns a list of the currently loaded playlist (complete)
+
+Getcurrentplaylisturi
+Returns an uri of the currently loaded playlist, or none if its a custom list
+
+Getcurrenttrack
+Returns trackdata of current track
+
+Getstatus
+Returns array of statusses of play, mute, currenttrack, position, volume, shuffle, repeat
+
+Getfavoritesongs
+Returns a list of starred songs
+
+Getfavoritealbums
+Returns a list of starred albums (needs workaround for spotify)
+
+Getfavoriteartists
+Returns a list of starred artists (needs workaround for spotify)
+
+Getnewalbums
+Returns a list of what's news albums
+
+Setshuffle/setrepeat
+Toggles shuffle/repeat status. Arguments: none, true or false (true=on, none toggles)
+
+Search
+Returns a list of tracks. Arguments: keywords, method (none=all, album, artist, track)
+
+Events from Mopidy to client:
+-----------------------------
+Currenttrackupdated
+Volumeupdated
+Playstatusupdated
+PlaylistUpdated
+MessageUser
+SearchResults
+AlbumResults
+ArtistResults
+PLaylistResults
+UserPlaylistsResults
+
+		<div class="navbar navbar-fixed-top navbar-inverse">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			        </a>
+					<a class="brand" href="#">Mopidy </a>
+					<div class="nav-collapse collapse">
+						<div class="row">
+						<div id="buttons">
+							<ul class="nav">
+								<!--	            	socket.emit('getplaylisttracks', uri);
+								<li><a href="#" onclick="getPlaylists(); return false;"><img src="img/icons/arrow_left_alt1_32x32.png" alt="Back" style="margin-top: 8px;" class="breakafter" /></a></li>
+								-->
+								<li>
+									<a href="#" onclick="socket.emit('getcurrentplaylist'); return false;"><img src="img/icons/arrow_left_alt1_32x32.png" alt="Back" style="margin-top: 8px;" class="breakafter" /></a>
+								</li>
+								<li>
+									<a href="#" onclick="doprevious(); return false"><img src="img/icons/first_16x16.png" alt="Previous Track" /></a>
+								</li>
+								<li>
+									<a href="#" onclick="playpause(); return false"><img src="img/icons/play_alt_32x32.png" style="margin-top: 8px;" alt="Play" id="playbt" /></a>
+								</li>
+								<li>
+									<a href="#" onclick="donext(); return false"><img src="img/icons/last_16x16.png" alt="Next Track" class="breakafter" /></a>
+								</li>
+
+								<li>
+									<a href="#" onclick="doshuffle(); return false"><img src="img/icons/loop_alt2_24x21.png" alt="" id="shufflebt" /></a>
+								</li>
+								<li>
+									<a href="#" onclick="dorepeat(); return false"><img src="img/icons/reload_18x21.png" class="breakafter" id="repeatbt" alt="" /></a>
+								</li>
+								<!-- <li><a href="#"><img src="img/icons/heart_fill_24x21.png" alt="" /></a></li> -->
+								<li class="dropdown">
+									<a href="#plus" class="dropdown-toggle" data-toggle="dropdown"><img src="img/icons/plus_16x16.png" alt="" /><b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="#buttonGroups">Add to playlist</a>
+										</li>
+										<li>
+											<a href="#buttonDropdowns">Favorite Song</a>
+										</li>
+										<li>
+											<a href="#buttonDropdowns">Favorite Album</a>
+										</li>
+										<li>
+											<a href="#buttonDropdowns">Favorite Artist</a>
+										</li>
+									</ul>
+								</li>
+							</ul> <!-- nav -->
+						</div> <!-- buttons -->
+					
+						<div id="songinfo">
+							<span id="songname"> </span>
+							<br/>
+							<span id="artist"> </span>
+							<br/>
+						</div> <!-- songinfo -->
+							
+							<div class="pull-right" id="volumecontainer" style="padding-top: 5px;">
+								<!-- <a href="#mute" onclick="volumeMute(); return false;"><img src="img/icons/volume_mute_24x18.png" alt="" /></a>
+								<a href="#" onclick="volumeDown(); return false;"><img src="img/icons/volume_12x9.png" alt="" /></a> -->
+									<div style="float:left"><a href="#" onclick="volumeUp(); return false;"><img src="img/icons/volume_24x18.png"  class="breakafter" alt="" /></a></div>
+									<div style="margin-left: 24px;">
+										<input id="volumeslider" class="fd-form-element-hidden" type="text" min="0" max="100" step="1" title="Change Volume" value="50" maxlength="10" onchange="alert(this.value); setVolume(this.value); " />
+									</div>
+									<form class="navbar-search">
+										<input id="searchinput" onkeypress="return searchPressed(event.keyCode);" type="text" class="search-query" placeholder="Search..." />
+									</form>
+							</div>
+
+						</div> <!-- row -->
+						
+						<div class="row-collapse">
+							<span style="float:left" id="songelapsed">0:00</span>
+							<span style="float:right" id="songlength">0:00</span>
+							<div style="margin-right: 2em; margin-left: 2.2em;">
+								<input id="trackslider" class="fd-form-element-hidden" type="text" min="0" max="1000" step="1" title="Seek" value="0" maxlength="10" onchange="seek(this.value)" />
+							</div>
+						</div>
+
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
