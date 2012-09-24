@@ -32,13 +32,14 @@ function handlePlaylist(resultArr) {
     //cache
     newplaylisturi = resultArr["uri"];
     playlists[newplaylisturi] = resultArr;
-    playlisttotable(playlists[newplaylisturi], CURRENT_PLAYLIST_TABLE);
-    $('#currentloader').hide();
+    playlisttotable(playlists[newplaylisturi], PLAYLIST_TABLE);
+    $('#playlistloader').hide();
 }
 
 //process results of a returned playlist
 function handleCurrentPlaylist(resultArr) {
-    console.log(resultArr)
+    //console.log(resultArr);
+    playlisttotable(resultArr, CURRENT_PLAYLIST_TABLE);
     //$("#result").html(resultArr);
 }
 

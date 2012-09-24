@@ -16,8 +16,9 @@ var play = false;
 var shuffle;
 var repeat;
 var currentVolume = -1;
-var muteVol = -1;
+var mute = false;
 var postimer;
+var initgui = true;
 
 //array of cached playlists (not only user-playlists, also search, artist, album-playlists)
 var playlists = new Array();
@@ -25,6 +26,7 @@ var playlists = new Array();
 //constants
 ARTIST_TABLE = '#artiststable';
 ALBUM_TABLE = '#albumstable';
+PLAYLIST_TABLE = '#playlisttable';
 CURRENT_PLAYLIST_TABLE = '#currenttable';
 SEARCH_ANY_TABLE = '#searchanytable';
 SEARCH_ALBUMS_TABLE = '#albumresulttable';
@@ -35,7 +37,7 @@ WEB_SOCKET_SWF_LOCATION = "/static/WebSocketMain.swf";
 WEB_SOCKET_DEBUG = true;
 
 //process updated playlist to gui
-function playlisttotable(playlist, table) {
+function playlisttotable(pl, table) {
     /*  <tr>
      <td>Title</td>
      <td>Artist</td>
@@ -46,7 +48,7 @@ function playlisttotable(playlist, table) {
     tmp = '';
     $(table).empty();
 
-    with (playlist) {
+    with (pl) {
         for (var i = 0; i < tracks.length; i++) {
             var child = '<tr><td><a href="#" class="name" id="' + tracks[i].uri + '">' + tracks[i].name + "</a></td><td>";
             for (var j = 0; j < tracks[i].artists.length; j++) {
@@ -59,16 +61,16 @@ function playlisttotable(playlist, table) {
     }
 
     $(table).html(tmp);
-    $(table).attr('data', playlist.uri);
+    $(table).attr('data', pl.uri);
     //set click handlers
     $(table + ' .name').click(function() {
-        return playtrack(this.id, playlist.uri)
+        return playtrack(this.id, pl.uri)
     });
     $(table + ' .album').click(function() {
-        return showalbum(this.id, playlist.uri)
+        return showalbum(this.id, pl.uri)
     });
     $(table + ' .artist').click(function() {
-        return showartist(this.id, playlist.uri)
+        return showartist(this.id, pl.uri)
     });
 }
 
@@ -82,7 +84,7 @@ function timeFromSeconds(length) {
 }
 
 //playlist object
-function playlist(name, uri, tracks) {
+function _playlist(name, uri, tracks) {
     this.uri = uri;
     this.name = name;
     //array of track
@@ -104,7 +106,7 @@ function track(uri, length, artists, name, albumname, albumuri) {
 function resultToPlaylists(resultArr, nwplaylists) {
     //get list of playlists from server result
     for (var i = 0; i < resultArr.length; i++) {
-        nwplaylists.push(new playlist(resultArr[i][0], resultArr[i][1]));
+        nwplaylists.push(new _playlist(resultArr[i][0], resultArr[i][1]));
     }
 }
 

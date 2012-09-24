@@ -7,7 +7,7 @@
 
 		<!-- proble <meta name = "viewport" content = "width=device-width, initial-scale = 1.0, user-scalable = no"> -->
 		<!-- <meta name="viewport" content="width=device-width, user-scalable=no"> -->
-<!--		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"> -->
+		<!--		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"> -->
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="apple-touch-icon" href="img/icons/headphones_32x28.png" />
@@ -22,7 +22,7 @@
 		<meta name="description" content="">
 		<meta name="author" content="Wouter van Wijk">
 		<meta name="copyright" content="(c) 2012 Wouter van Wijk" />
-		<!-- Le styles -->
+		<!-- Styles -->
 		<link href="css/bootstrap.min.css" rel="stylesheet">
 		<link href="css/bootstrap-responsive.css" rel="stylesheet">
 		<link href="css/ws.css" rel="stylesheet">
@@ -36,44 +36,42 @@
 
 	<body>
 
-  <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-			            <span class="icon-bar"></span>
-			            <span class="icon-bar"></span>
-			            <span class="icon-bar"></span>
-			        </a>
+		<div class="navbar navbar-fixed-top navbar-inverse">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
 					<a class="brand" href="#">Mopidy </a>
-					<div class="nav-collapse collapse">
-						<div class="row">
-						<div id="buttons">
-							<ul class="nav">
-								<!--	            	socket.emit('getplaylisttracks', uri);
-								<li><a href="#" onclick="getPlaylists(); return false;"><img src="img/icons/arrow_left_alt1_32x32.png" alt="Back" style="margin-top: 8px;" class="breakafter" /></a></li>
-								-->
-								<li>
-									<a href="#" onclick="socket.emit('getcurrentplaylist'); return false;"><img src="img/icons/arrow_left_alt1_32x32.png" alt="Back" style="margin-top: 8px;" class="breakafter" /></a>
-								</li>
-								<li>
-									<a href="#" onclick="doprevious(); return false"><img src="img/icons/first_16x16.png" alt="Previous Track" /></a>
-								</li>
-								<li>
-									<a href="#" onclick="playpause(); return false"><img src="img/icons/pause_12x16.png" style="margin-top: 8px;" alt="Play" id="playbt" /></a>
-								</li>
-								<li>
-									<a href="#" onclick="donext(); return false"><img src="img/icons/last_16x16.png" alt="Next Track" class="breakafter" /></a>
-								</li>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<!--									<li>
+							<a href="#" onclick="test(); return false;">Test</a>
+							</li> -->
+							<li>
+								<a href="#" onclick="test(); return false;"><img src="img/icons/arrow_left_alt1_32x32.png" alt="Back" style="margin-top: 8px;" class="breakafter" /></a>
+							</li>
+							<li>
+								<a href="#" onclick="doPrevious(); return false"><img src="img/icons/first_12x12.png" alt="Previous Track" /></a>
+							</li>
+							<li>
+								<a href="#" onclick="doPlayPause(); return false"><img src="img/icons/pause_18x24.png" style="margin-top: 8px;" alt="Play" id="playbt" /></a>
+							</li>
+							<li>
+								<a href="#" onclick="doNext(); return false"><img src="img/icons/last_12x12.png" alt="Next Track" class="breakafter" /></a>
+							</li>
 
-								<li>
-									<a href="#" onclick="doshuffle(); return false"><img src="img/icons/loop_alt2_24x21.png" alt="" id="shufflebt" /></a>
+							<span style="width:40px; height: 40px;" >
+								<li class="btsquare">
+									<a href="#" onclick="doShuffle(); return false"><img src="img/icons/loop_alt2_16x14.png" alt="" id="shufflebt" /></a>
 								</li>
-								<li>
-									<a href="#" onclick="dorepeat(); return false"><img src="img/icons/reload_18x21.png" class="breakafter" id="repeatbt" alt="" /></a>
+								<li class="btsquare">
+									<a href="#" onclick="doMute(); return false;"><img id="mutebt" src="img/icons/volume_16x12.png" alt="" /></a>
 								</li>
-								<!-- <li><a href="#"><img src="img/icons/heart_fill_24x21.png" alt="" /></a></li> -->
-								<li class="dropdown">
-									<a href="#plus" class="dropdown-toggle" data-toggle="dropdown"><img src="img/icons/plus_16x16.png" alt="" /><b class="caret"></b></a>
+								<br/>
+								<li class="btsquare">
+									<a href="#" onclick="doRepeat(); return false"><img src="img/icons/reload_12x14.png" id="repeatbt" alt="" /></a>
+								</li>
+								<li class="btsquare dropdown">
+									<a href="#plus" class="dropdown-toggle" data-toggle="dropdown"><img src="img/icons/plus_12x12.png" alt="" /></a>
 									<ul class="dropdown-menu">
 										<li>
 											<a href="#buttonGroups">Add to playlist</a>
@@ -88,54 +86,48 @@
 											<a href="#buttonDropdowns">Favorite Artist</a>
 										</li>
 									</ul>
-								</li>
-							</ul> <!-- nav -->
-						</div> <!-- buttons -->
-					
-						<div id="songinfo">
-							<span id="songname"> </span>
-							<br/>
-							<span id="artist"> </span>
-							<br/>
-						</div> <!-- songinfo -->
-							
-							<div class="pull-right" id="volumecontainer" style="padding-top: 5px;">
-								<!-- <a href="#mute" onclick="volumeMute(); return false;"><img src="img/icons/volume_mute_24x18.png" alt="" /></a>
-								<a href="#" onclick="volumeDown(); return false;"><img src="img/icons/volume_12x9.png" alt="" /></a> -->
-									<div style="float:left"><a href="#" onclick="volumeUp(); return false;"><img src="img/icons/volume_24x18.png"  class="breakafter" alt="" /></a></div>
-									<div style="margin-left: 24px;">
-										<input id="volumeslider" class="fd-form-element-hidden"  type="text" title="Change Volume" onchange="alert(this.value); setVolume(this.value);" />
-									</div>
-									<form class="navbar-search">
-										<input id="searchinput" onkeypress="return searchPressed(event.keyCode);" type="text" class="search-query" placeholder="Search..." />
-									</form>
+								</li> </span>
+							<div style="visibility: hidden; width: 40px; margin-top: -3px;">
+								<input id="volumeslider" type="range" min="0" max="100" title="Change Volume" onchange="doVolume(this.value);"/>
 							</div>
+						</ul>
+						<!-- nav -->
 
-						</div> <!-- row -->
-						
-						<div class="row-collapse">
-							<span style="float:left" id="songelapsed">0:00</span>
-							<span style="float:right" id="songlength">0:00</span>
-							<div style="margin-right: 2em; margin-left: 2.2em;">
-								<input id="trackslider" class="fd-form-element-hidden" type="text" onChange="seekPos(this.value);" />
+						<div class="pull-right">
+							<form class="navbar-search pull-right">
+								<input id="searchinput" onkeypress="return searchPressed(event.keyCode);" type="text" class="search-query" placeholder="Search..." />
+							</form>
+							<div>
+								<span style="float:left" id="songelapsed">0:00</span>
+								<span style="float:right" id="songlength">0:00</span>
+								<div style="margin-right: 3.5em; margin-left: 3em;margin-top: 4px;">
+									<input id="trackslider" min="0" max="1000" type="range" style="width:100%; margin-top: -4px;" value="0" onchange="doSeekPos(this.value);"/>
+								</div>
 							</div>
 						</div>
 
-					</div><!--/.nav-collapse -->
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
-    
+						<div id="songinfo" class="span4">
+							<span id="infoname">Test</span>
+							<br/>
+							<span id="infoartist">Artist</span>
+							<br/>
+						</div>
+						<!-- songinfo -->
+
+					</div><!-- /.nav-collapse -->
+				</div><!-- /.container -->
+			</div><!-- /.navbar-inner -->
+		</div><!-- /.navbar -->
+
 		<div class="container-fluid">
 			<div class="row-fluid">
 				<div class="span2">
-					<div class="well sidebar-nav">
-						<ul class="nav nav-list">
-<!--							<li id="lihome">
-								<a href="#home">Home</a>
+					<div class="well sidebar-nav sidebar-nav-inverse">
+						<ul class="nav nav-list nav-inverse nav-list-inverse">
+							<!--							<li id="lihome">
+							<a href="#home">Home</a>
 							</li>
--->
+							-->
 							<li class="active" id="liplaylists">
 								<a href="#playlists" >Playlists</a>
 							</li>
@@ -158,22 +150,22 @@
 					<div class="well sidebar-nav" id="result"></div>
 
 				</div><!--/span2-->
-<!--
+				<!--
 				<div class="span10 content" id="homepane">
 
-					<div class="hero-unit">
-						<img src="img/logo.png" align="right" class="visible-tablet visible-desktop" />
-						<img src="img/logo.png" align="right" width=75%" height="75%"  class="visible-phone" />
-						<h2>Home</h2>
-						<img src="img/albums.png" class="visible-tablet visible-desktop" />
-						<img src="img/albums.png" width=75%" height="75%" class="visible-phone" />
-						<p>
-							Welcome back!
-						</p>
-					</div>
+				<div class="hero-unit">
+				<img src="img/logo.png" align="right" class="visible-tablet visible-desktop" />
+				<img src="img/logo.png" align="right" width=75%" height="75%"  class="visible-phone" />
+				<h2>Home</h2>
+				<img src="img/albums.png" class="visible-tablet visible-desktop" />
+				<img src="img/albums.png" width=75%" height="75%" class="visible-phone" />
+				<p>
+				Welcome back!
+				</p>
+				</div>
 
 				</div>
--->
+				-->
 
 				<div class="span10 content" id="playlistspane">
 					<div class="row-fluid">
@@ -182,12 +174,29 @@
 							<p>
 								<ul id="playlistslist"></ul>
 							</p>
-              <img src="img/loader.gif" id="playlistsloader" class= "loader" />
+							<img src="img/loader.gif" id="playlistsloader" class="loader" />
 						</div>
+						<div class="span8" style="display: none" id="playlisttablediv">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<!--	<th>#</th> -->
+										<th>Title</th>
+										<th>Artist</th>
+										<th>Album</th>
+										<th>Length</th>
+									</tr>
+								</thead>
+								<tbody id="playlisttable"></tbody>
+							</table>
+							<img src="img/loader.gif" id="playlistloader" class= "loader" />
+						</div>
+
 					</div><!--/row-->
 				</div>
 
 				<div class="span10 content" id="currentpane">
+					<h2>Current Playlist</h2>
 					<table class="table table-striped">
 						<thead>
 							<tr>
@@ -198,10 +207,9 @@
 								<th>Length</th>
 							</tr>
 						</thead>
-						<tbody id="currenttable">
-						</tbody>
+						<tbody id="currenttable"></tbody>
 					</table>
-          <img src="img/loader.gif" id="currentloader" class= "loader" />
+					<img src="img/loader.gif" id="currentloader" class= "loader" />
 				</div>
 
 				<div class="span10 content" id="albumspane">
@@ -222,10 +230,9 @@
 								<th>Length</th>
 							</tr>
 						</thead>
-						<tbody id="albumstable">
-						</tbody>
+						<tbody id="albumstable"></tbody>
 					</table>
-          <img src="img/loader.gif" id="albumsloader" class= "loader" />
+					<img src="img/loader.gif" id="albumsloader" class= "loader" />
 				</div>
 
 				<div class="span10 content" id="artistspane">
@@ -246,10 +253,9 @@
 								<th>Length</th>
 							</tr>
 						</thead>
-						<tbody id="artiststable">
-						</tbody>
+						<tbody id="artiststable"></tbody>
 					</table>
-          <img src="img/loader.gif" id="artistsloader" class= "loader" />
+					<img src="img/loader.gif" id="artistsloader" class= "loader" />
 				</div>
 
 				<div class="span10 content" id="searchpane">
@@ -278,13 +284,12 @@
 										<th>Length</th>
 									</tr>
 								</thead>
-								<tbody id="allresulttable">
-								</tbody>
+								<tbody id="allresulttable"></tbody>
 							</table>
-              <img src="img/loader.gif" id="allresultloader" class= "loader" />
+							<img src="img/loader.gif" id="allresultloader" class= "loader" />
 						</div>
 						<div class="tab-pane fade in" id="searchartists">
-							<table>
+							<table class="table table-striped">
 								<thead>
 									<tr>
 										<th>Title</th>
@@ -293,10 +298,9 @@
 										<th>Length</th>
 									</tr>
 								</thead>
-								<tbody id="artistresulttable">
-								</tbody>
+								<tbody id="artistresulttable"></tbody>
 							</table>
-              <img src="img/loader.gif" id="artistresultloader" class= "loader" />
+							<img src="img/loader.gif" id="artistresultloader" class= "loader" />
 						</div>
 						<div class="tab-pane fade" id="searchtracks">
 							<table class="table table-striped">
@@ -308,10 +312,9 @@
 										<th>Length</th>
 									</tr>
 								</thead>
-								<tbody id="trackresulttable">
-                  <img src="img/loader.gif" id="trackresultloader" class= "loader" />
-								</tbody>
+								<tbody id="trackresulttable"></tbody>
 							</table>
+							<img src="img/loader.gif" id="trackresultloader" class= "loader" />
 						</div>
 						<div class="tab-pane fade" id="searchalbums">
 							<table class="table table-striped">
@@ -323,10 +326,9 @@
 										<th>Length</th>
 									</tr>
 								</thead>
-								<tbody id="albumresulttable">
-								</tbody>
+								<tbody id="albumresulttable"></tbody>
 							</table>
-              <img src="img/loader.gif" id="albumresultloader" class= "loader" />
+							<img src="img/loader.gif" id="albumresultloader" class= "loader" />
 						</div>
 					</div>
 				</div>
@@ -343,6 +345,7 @@
 		================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="js/jquery.js"></script>
+		<script src="js/bootstrap.min.js"></script>
 		<script src="js/bootstrap-transition.js"></script>
 		<script src="js/bootstrap-alert.js"></script>
 		<script src="js/bootstrap-modal.js"></script>

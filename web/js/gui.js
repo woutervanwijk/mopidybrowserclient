@@ -1,5 +1,7 @@
 /* gui interactions here
- *
+ * set- functions only set/update the gui elements
+ * do- functions interact with the server
+ * show- functions do both
  */
 
 function showartist(uri) {
@@ -36,10 +38,12 @@ function showalbum(uri) {
     return false;
 }
 
+
+
 //play uri, update playlist to player if needed
 function playtrack(uri, playlisturi) {
     trackslist = new Array();
-    console.log('uri:' + uri);
+    console.log('play uri:' + uri);
     $(CURRENT_PLAYLIST_TABLE).empty();
     pl = playlists[playlisturi];
     playlisttotable(pl, CURRENT_PLAYLIST_TABLE);
@@ -63,6 +67,7 @@ function playtrack(uri, playlisturi) {
     }
     if (track) {
         setSongInfo(track);
+        $("#trackslider").attr("value", 0);
     }
     socket.emit('playtrack', uri);
     return false;
@@ -70,7 +75,7 @@ function playtrack(uri, playlisturi) {
 
 function setSongInfo(track) {
     console.log(track);
-    $("#songname").html(track.name);
+    $("#infoname").html(track.name);
     var artists = '';
     for (var j = 0; j < track.artists.length; j++) {
         artists += track.artists[j].name;
@@ -78,12 +83,12 @@ function setSongInfo(track) {
             artists += ' - ';
         }
     }
-
-    $("#artist").html(artists);
+    $("#trackslider").attr("max", track.length);
+    $("#infoartist").html(artists);
     $("#songlength").html(timeFromSeconds(track.length));
 }
 
-function setplay(nwplay) {
+function setPlaystate(nwplay) {
     if (!nwplay) {
         $("#playbt").attr('src', 'img/icons/play_alt_32x32.png');
     } else {
@@ -98,7 +103,7 @@ function setplay(nwplay) {
 }
 
 //play or pause
-function playpause() {
+function doPlayPause() {
     if (play) {
         socket.emit('play', true);
     } else {
@@ -109,30 +114,15 @@ function playpause() {
 }
 
 function setPlaylist(uri) {
-    $(CURRENT_PLAYLIST_TABLE).empty();
-    $('#currentloader').show();
+    $(PLAYLIST_TABLE).empty();
+     $('#playlisttablediv').show();
+     $('#playlistloader').show();
 //get if pl not in cache
     if (playlists[uri]) {
-        playlisttotable(playlists[uri], CURRENT_PLAYLIST_TABLE);
+        playlisttotable(playlists[uri], PLAYLIST_TABLE);
     } else {
         socket.emit('getplaylisttracks', uri);
     }
-    
-    switchContent('current', uri);
-    return false;
-}
-
-function setVolume(value) {
-console.log(value);
-    currentVolume = value;
-    socket.emit('setvolume', value);
-    return false;
-}
-
-function seekPos(value) {
-   console.log(value);
-    socket.emit('seek', value);
-    socket.emit('seek', value);
     return false;
 }
 
@@ -162,48 +152,31 @@ function initSearch(value) {
     if ((value.length < 100) && (value.length > 0)) {
         //seperate requests for now
         socket.emit('search', 'all', value);
-        socket.emit('search', 'track', value);
-        socket.emit('search', 'artist', value);
-        socket.emit('search', 'album', value);
+        //socket.emit('search', 'track', value);
+        //socket.emit('search', 'artist', value);
+        //socket.emit('search', 'album', value);
     }
 }
 
-function volumeMute() {
-    /*	console.log('currentvolume' + currentVolume);
-    var vol = 0;
-    if (currentVolume > 0) {
-    //mute
-    muteVol = currentVolume;
-    } else {
-    //unmute if mutevol > 0
-    if(muteVol > 0) {
-    vol = muteVol;
-    muteVol = -1;
-    }
-    }
-    */
+function doMute() {
     //only emit the event, not the status
-    socket.emit('muteunmute');
+    setMute(!mute);
+    socket.emit('mute', !mute);
 }
 
-function volumeUp() {
-    console.log(currentVolume);
-    var vol = currentVolume + 10;
-    if (vol > 100) {
-        vol = 100
+function setMute(nwmute) {
+    if (mute == nwmute) {
+        return
     }
-    socket.emit('setvolume', vol);
-}
-
-function volumeDown() {
-    var vol = currentVolume - 10;
-    if (vol < 0) {
-        vol = 0
+    if (nwmute) {
+        $("#mutebt").attr('src', 'img/icons/volume_mute_24x18.png');
+    } else {
+        $("#mutebt").attr('src', 'img/icons/volume_24x18.png');
     }
-    socket.emit('setvolume', vol);
+    mute = nwmute;
 }
 
-function setrepeat(nwrepeat) {
+function setRepeat(nwrepeat) {
     if (repeat == nwrepeat) {
         return
     }
@@ -215,7 +188,7 @@ function setrepeat(nwrepeat) {
     repeat = nwrepeat;
 }
 
-function setshuffle(nwshuffle) {
+function setShuffle(nwshuffle) {
     if (shuffle == nwshuffle) {
         return
     }
@@ -227,48 +200,66 @@ function setshuffle(nwshuffle) {
     shuffle = nwshuffle;
 }
 
-function doprevious() {
-    //setplay(true);
+function doPrevious() {
     socket.emit('previous');
 }
 
-function donext() {
+function doNext() {
     socket.emit('next', 'next test');
 }
 
-function doshuffle() {
+function doShuffle() {
     if (shuffle == false) {
         socket.emit('random', '1');
     } else {
         socket.emit('random', '0');
     }
-    setshuffle(!shuffle);
+    setShuffle(!shuffle);
 }
 
-function dorepeat() {
+function doRepeat() {
     if (repeat == false) {
         socket.emit('repeat', '1');
     } else {
         socket.emit('repeat', '0');
     }
-    setrepeat(!repeat);
+    setRepeat(!repeat);
 }
 
-function setvol(vol) {
-    socket.emit('setvolume', vol);
+function doVolume(value) {
+    console.log(value);
+    if (!initgui) {
+         socket.emit('setvolume', value);
+    }   
 }
 
-function seek(val) {
-    socket.emit('seek', val);
+function doSeekPos(value) {
+    console.log(value);
+    if (!initgui) {
+        socket.emit('seekpos', value);
+    }
 }
 
 function getPlaylists() {
     socket.emit("getplaylists");
 }
 
+function getCurrentPlaylist() {
+    socket.emit("getcurrentplaylist");
+}
+
 //timer function to update interface
 function updateTime() {
 
+}
+
+//update everything as if reloaded
+function updateStatusOfAll() {
+    socket.emit('getvolume');   
+    socket.emit('getpos');   
+    //socket.emit('getcurrenttrack');   
+    //socket.emit('getcurrentplaylist');   
+    //socket.emit('getplaylists');   
 }
 
 function initSocketEvents() {
@@ -295,10 +286,15 @@ function initSocketEvents() {
     // Results of artist request
     socket.on('artistresults', handleArtistResults);
 
+    // Results of statusses
+    socket.on('getvolume', setVolume );
+    socket.on('getpos', setPos );
+
 }
 
-function updateVolume(vol) {
-    $("#volumeslider").value(vol);
+function setVolume(value) {
+    $("#volumeslider").attr("value", value);
+
 }
 
 
@@ -313,8 +309,8 @@ function switchContent(divid, uri) {
     location.hash = hash;
 }
 
-function updatePos() {
-    
+function setPos(value) {
+    $("#trackslider").attr("value", value);
 }
 
 function initTimer () {
@@ -322,42 +318,8 @@ function initTimer () {
 }
 
 $(document).ready(function() {
-      fdSlider.createSlider({
-        // Associate an input
-        inp:document.getElementById("trackslider"),
-        // Declare a step
-        step:1, 
-        // Declare a maxStep (for keyboard users)
-        maxStep:30,
-        // Min value
-        min:0,
-        // Max value
-        max:1000,
-        // Use the "tween to click point" animation
-         animation:"tween",
-        // Force the associated input to have a valid value
-        forceValue:true,
-        hideInput:true
 
-      });
-
-      fdSlider.createSlider({
-        // Associate an input
-        inp:document.getElementById("volumeslider"),
-        // Declare a step
-        step:1, 
-        // Declare a maxStep (for keyboard users)
-        maxStep:2,
-        // Min value
-        min:0,
-        // Max value
-        max:100,
-        // Use the "tween to click point" animation
-        animation:"tween",
-        // Force the associated input to have a valid value
-        forceValue:true,
-        hideInput:true
-      });
+     // fdSlider.addEvent(document.getElementById("fd-slider-volume"), "change", function(e) { alert("e");  });
     
 
     // Socket.io specific code
@@ -450,5 +412,10 @@ $(document).ready(function() {
         });
     })(window);
 */
-
+        updateStatusOfAll();
+  initgui = false;
 });
+
+function test() {
+        updateStatusOfAll();
+}
