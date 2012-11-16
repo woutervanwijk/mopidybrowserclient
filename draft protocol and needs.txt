@@ -12,8 +12,7 @@ Optional
 
 ----
 
-Protocol
-Base: socketio
+Protocol: json over websockets (REST?)
 
 Events to mopidy (client generated):
 ------------------------------------
